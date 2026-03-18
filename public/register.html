@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - E‑Voting System</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>E‑Voting System</h1>
+    
+    <!-- Registration Form -->
+    <form id="registerForm" class="card">
+      <h2>Create Account</h2>
+      <p>Register to cast your vote.</p>
+      <label>
+        Student ID
+        <input type="text" id="studentId" required minlength="3" maxlength="20" />
+      </label>
+      <label>
+        Full Name
+        <input type="text" id="name" required minlength="2" maxlength="100" />
+      </label>
+      <label>
+        Password
+        <input type="password" id="password" required minlength="4" />
+      </label>
+      <label>
+        Confirm Password
+        <input type="password" id="confirmPassword" required minlength="4" />
+      </label>
+      <button type="submit">Register</button>
+      <div id="message" class="message"></div>
+      <p style="text-align: center; margin-top: 1rem;">
+        Already have an account? <a href="/">Login here</a>
+      </p>
+    </form>
+  </main>
+  <script src="/js/app.js"></script>
+</body>
+</html>

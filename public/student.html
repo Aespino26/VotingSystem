@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard - E‑Voting</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Student Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Cast your vote</h2>
+      <div id="candidates"></div>
+      <button id="submitVote" class="primary">Submit Vote</button>
+      <div id="voteMessage" class="message"></div>
+    </section>
+
+    <section class="card">
+      <h2>Your votes</h2>
+      <div id="myVotes"></div>
+    </section>
+
+    <section class="card">
+      <h2>Results</h2>
+      <div id="results"></div>
+    </section>
+  </main>
+  <script src="/js/app.js"></script>
+</body>
+</html>

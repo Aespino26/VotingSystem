@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - E‑Voting</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Admin Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Manage Candidates</h2>
+      <form id="candidateForm" class="candidate-form">
+        <input type="hidden" id="candidateId" />
+        <label>
+          Name
+          <input type="text" id="candidateName" required />
+        </label>
+        <label>
+          Position
+          <input type="text" id="candidatePosition" required />
+        </label>
+        <label>
+          Description
+          <textarea id="candidateDescription"></textarea>
+        </label>
+        <button type="submit" class="primary">Save Candidate</button>
+        <button type="button" id="cancelEdit" class="secondary">Cancel</button>
+      </form>
+
+      <div id="candidateList"></div>
+      <div id="candidateMessage" class="message"></div>
+    </section>
+
+    <section class="card">
+      <h2>Results</h2>
+      <div id="results"></div>
+    </section>
+  </main>
+  <script src="/js/app.js"></script>
+</body>
+</html>

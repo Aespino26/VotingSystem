@@ -1,121 +1,91 @@
+Web-Based School E-Voting System — Spec v0.0.2
 
-🗳️ Web-Based School E-Voting System
-1. System Description
+Goal: A simple website where students can vote online, and admin manages the system.
 
-The Web-Based School E-Voting System is an online application that allows students to vote using a web browser. It provides a fast, secure, and paperless way to conduct school elections.
+1) Scope
+Included
 
-2. Users
-👤 Student (User)
+Student login
 
-Sign up (create account)
+User dashboard
 
-Login
+Admin dashboard
 
 View candidates
 
-Cast vote
+Vote system
 
-View voting status
+Auto vote counting
 
-🛠️ Admin
+Results display
 
-Login
+Admin can manage candidates (CRUD)
 
-Manage students and candidates
+Not Included
 
-Start and end election
+Mobile app
 
-View results
+Biometric login
 
-3. Main Features
-🔐 Login & Signup Page
+Advanced features
 
-Students register using:
+2) Technology
 
-Student ID
+Frontend: HTML, CSS, JavaScript
 
-Name
+Backend: PHP / Node.js / NestJS
 
-Email
+Database: MySQL
 
-Password
+3) Features
+Student (User)
 
-Users log in using email/ID and password
+Login using student ID
 
-System verifies user credentials
+View dashboard
 
-🧑‍🎓 User Dashboard (Web Page)
-
-Accessible after login
-
-Displays list of candidates and positions
-
-Allows students to:
+See candidates
 
 Vote once
 
-Receive confirmation after voting
+View status/results
 
-View voting status
+Admin
 
-🛠️ Admin Dashboard (Web Page)
+Login to admin dashboard
 
-Accessible only to admin
+Add, edit, delete candidates
 
-Features:
+View votes and results
 
-Manage students
+Voting
 
-Manage candidates
+Choose one candidate per position
 
-Start/End election
+Submit vote
 
-View voting results
+System counts votes automatically
 
-4. System Flow
+4) API Example
+GET /api/hello
 
-User opens the system in a web browser
+Response:
 
-User signs up or logs in
+{
+  "message": "Welcome to E-Voting System"
+}
+5) Acceptance Criteria
 
-Admin activates election
+Works in browser
 
-User accesses dashboard
+Students & admin can log in
 
-User casts vote
+Has user & admin dashboard
 
-System records the vote
+Admin can manage candidates
 
-Admin monitors results
+Students can vote once only
 
-Admin ends election
+Votes are counted automatically
 
-5. Rules
-
-One user can vote only once
-
-Only registered users can vote
-
-Voting is allowed only during an active election
-
-Admin has full control of the system
-
-6. Technology Used
-
-HTML, CSS, Bootstrap
-
-JavaScript
-
-PHP (for server-side processing)
-
-Web browser (Chrome, Edge, etc.)
-
-7. Key Advantages
-
-Accessible online anytime
-
-No paper needed
-
-Faster and more accurate results
-
-Easy to use and manage
+Results are displayed
