@@ -23,13 +23,15 @@ export class AuthService {
     return user;
   }
 
-  async register(studentId: string, name: string, password: string) {
+  async register(studentId: string, name: string, password: string, role?: string) {
     const existing = await this.usersService.findByStudentId(studentId);
     if (existing) {
       throw new UnauthorizedException('Student ID already registered');
     }
 
-    const user = await this.usersService.createStudent(studentId, name, password);
+    const user = role === 'admin' 
+      ? await this.usersService.createAdmin(studentId, name, password)
+      : await this.usersService.createStudent(studentId, name, password);
     const payload = { sub: user.id, studentId: user.studentId, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),

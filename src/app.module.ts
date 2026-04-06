@@ -18,7 +18,10 @@ import { Vote } from './entities/vote.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: process.env.DATABASE_PATH ?? 'data/voting.sqlite',
+      database:
+        process.env.NODE_ENV === 'test'
+          ? ':memory:'
+          : process.env.DATABASE_PATH ?? 'data/voting.sqlite',
       synchronize: true,
       logging: false,
       entities: [User, Candidate, Vote],
