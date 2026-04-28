@@ -21,7 +21,8 @@ function clearSession() {
 
 function authFetch(url, options = {}) {
   const token = getToken();
-  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  const isFormData = options.body instanceof FormData;
+  const headers = { ...(isFormData ? {} : { 'Content-Type': 'application/json' }), ...(options.headers || {}) };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -38,6 +39,43 @@ function showMessage(container, text, type = 'error') {
   container.textContent = text;
   container.classList.remove('error', 'success');
   container.classList.add(type);
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function setLoading(container, text = 'Loading...') {
+  container.innerHTML = `<div class="loading-state">${escapeHtml(text)}</div>`;
+}
+
+function setEmpty(container, text) {
+  container.innerHTML = `<div class="empty-state">${escapeHtml(text)}</div>`;
+}
+
+function pluralizeVote(count) {
+  return `${count} vote${count === 1 ? '' : 's'}`;
+}
+
+function getInitials(name = '') {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  return (parts[0]?.[0] || 'C') + (parts[1]?.[0] || '');
+}
+
+function candidateAvatar(candidate, sizeClass = '') {
+  const imageUrl = candidate.imageUrl ? escapeHtml(candidate.imageUrl) : '';
+  const initials = escapeHtml(getInitials(candidate.name || 'Candidate').toUpperCase());
+
+  if (imageUrl) {
+    return `<img class="candidate-avatar ${sizeClass}" src="${imageUrl}" alt="${escapeHtml(candidate.name)} photo" loading="lazy" />`;
+  }
+
+  return `<div class="candidate-avatar placeholder ${sizeClass}" aria-hidden="true">${initials}</div>`;
 }
 
 async function handleLogin(event) {
@@ -137,15 +175,20 @@ async function ensureLoggedIn(redirect = true) {
 
 async function loadCandidates() {
   const container = document.getElementById('candidates');
-  container.innerHTML = 'Loading candidates...';
+  setLoading(container, 'Loading candidates...');
 
   const res = await authFetch(`${apiBase}/candidates`);
   if (!res.ok) {
-    container.textContent = 'Unable to load candidates.';
+    setEmpty(container, 'Unable to load candidates.');
     return;
   }
 
   const candidates = await res.json();
+  if (!candidates.length) {
+    setEmpty(container, 'No candidates are available yet.');
+    return;
+  }
+
   const byPosition = candidates.reduce((acc, candidate) => {
     (acc[candidate.position] = acc[candidate.position] || []).push(candidate);
     return acc;
@@ -155,10 +198,25 @@ async function loadCandidates() {
     const radios = list
       .map(
         (c) =>
-          `<label class="radio"><input type="radio" name="${position}" value="${c.id}" /> ${c.name} <span class="muted">(${c.description || 'No description'})</span></label>`,
+          `<label class="radio candidate-option">
+            <input type="radio" name="${escapeHtml(position)}" value="${c.id}" />
+            ${candidateAvatar(c)}
+            <span>
+              <span class="candidate-name">${escapeHtml(c.name)}</span>
+              <span class="candidate-description">${escapeHtml(c.description || 'No description provided.')}</span>
+            </span>
+          </label>`,
       )
       .join('');
-    return `<div class="position-group"><h3>${position}</h3>${radios}</div>`;
+    return `
+      <div class="position-group">
+        <div class="position-header">
+          <h3>${escapeHtml(position)}</h3>
+          <span class="count-pill">${list.length} candidate${list.length === 1 ? '' : 's'}</span>
+        </div>
+        ${radios}
+      </div>
+    `;
   });
 
   container.innerHTML = htmlSections.join('');
@@ -166,23 +224,25 @@ async function loadCandidates() {
 
 async function loadMyVotes() {
   const container = document.getElementById('myVotes');
-  container.textContent = 'Loading...';
+  setLoading(container);
   const res = await authFetch(`${apiBase}/votes/me`);
   if (!res.ok) {
-    container.textContent = 'Unable to load your votes.';
+    setEmpty(container, 'Unable to load your votes.');
     return;
   }
   const votes = await res.json();
   if (!votes.length) {
-    container.textContent = 'You have not voted yet.';
+    setEmpty(container, 'You have not voted yet.');
     return;
   }
 
   const items = votes
     .map((vote) => `
-      <div class="list-row">
+      <div class="list-row media-row">
+        ${candidateAvatar(vote.candidate, 'small')}
         <div>
-          <strong>${vote.candidate.position}</strong>: ${vote.candidate.name}
+          <strong>${escapeHtml(vote.candidate.position)}</strong>
+          <span class="muted">${escapeHtml(vote.candidate.name)}</span>
         </div>
         <div class="muted">${new Date(vote.createdAt).toLocaleString()}</div>
       </div>
@@ -194,15 +254,15 @@ async function loadMyVotes() {
 
 async function loadResults() {
   const container = document.getElementById('results');
-  container.textContent = 'Loading...';
+  setLoading(container);
   const res = await authFetch(`${apiBase}/votes/results`);
   if (!res.ok) {
-    container.textContent = 'Unable to load results.';
+    setEmpty(container, 'Unable to load results.');
     return;
   }
   const results = await res.json();
   if (!results.length) {
-    container.textContent = 'No votes yet.';
+    setEmpty(container, 'No votes yet.');
     return;
   }
 
@@ -216,10 +276,24 @@ async function loadResults() {
       const rows = items
         .map(
           (item) =>
-            `<div class="list-row"><div>${item.name}</div><div>${item.votes} vote${item.votes === 1 ? '' : 's'}</div></div>`,
+            `<div class="list-row">
+              <div>
+                <strong>${escapeHtml(item.name)}</strong>
+                <span class="muted">${escapeHtml(position)}</span>
+              </div>
+              <div class="result-value">${pluralizeVote(item.votes)}</div>
+            </div>`,
         )
         .join('');
-      return `<div class="position-group"><h3>${position}</h3>${rows}</div>`;
+      return `
+        <div class="position-group">
+          <div class="position-header">
+            <h3>${escapeHtml(position)}</h3>
+            <span class="count-pill">${items.length} result${items.length === 1 ? '' : 's'}</span>
+          </div>
+          <div class="stacked-list position-body">${rows}</div>
+        </div>
+      `;
     })
     .join('');
 
@@ -258,30 +332,32 @@ async function submitSelectedVotes() {
 
 async function loadAdminCandidates() {
   const container = document.getElementById('candidateList');
-  container.textContent = 'Loading...';
+  setLoading(container);
 
   const res = await authFetch(`${apiBase}/candidates`);
   if (!res.ok) {
-    container.textContent = 'Unable to load candidates.';
+    setEmpty(container, 'Unable to load candidates.');
     return;
   }
   const candidates = await res.json();
 
   if (!candidates.length) {
-    container.textContent = 'No candidates yet.';
+    setEmpty(container, 'No candidates yet.');
     return;
   }
 
   const html = candidates
     .map((c) => {
       return `
-        <div class="list-row">
+        <div class="list-row media-row">
+          ${candidateAvatar(c, 'small')}
           <div>
-            <strong>${c.position}</strong>: ${c.name} <span class="muted">${c.description || ''}</span>
+            <strong>${escapeHtml(c.name)}</strong>
+            <span class="muted">${escapeHtml(c.position)}${c.description ? ` - ${escapeHtml(c.description)}` : ''}</span>
           </div>
           <div class="list-actions">
-            <button type="button" data-action="edit" data-id="${c.id}">Edit</button>
-            <button type="button" data-action="delete" data-id="${c.id}">Delete</button>
+            <button type="button" class="secondary" data-action="edit" data-id="${c.id}">Edit</button>
+            <button type="button" class="danger" data-action="delete" data-id="${c.id}">Delete</button>
           </div>
         </div>
       `;
@@ -297,6 +373,7 @@ async function createOrUpdateCandidate(event) {
   const name = document.getElementById('candidateName').value.trim();
   const position = document.getElementById('candidatePosition').value.trim();
   const description = document.getElementById('candidateDescription').value.trim();
+  const image = document.getElementById('candidateImage').files[0];
   const message = document.getElementById('candidateMessage');
 
   if (!name || !position) {
@@ -304,11 +381,18 @@ async function createOrUpdateCandidate(event) {
     return;
   }
 
-  const payload = { name, position, description };
+  const payload = new FormData();
+  payload.append('name', name);
+  payload.append('position', position);
+  payload.append('description', description);
+  if (image) {
+    payload.append('image', image);
+  }
+
   const url = id ? `${apiBase}/candidates/${id}` : `${apiBase}/candidates`;
   const method = id ? 'PUT' : 'POST';
 
-  const res = await authFetch(url, { method, body: JSON.stringify(payload) });
+  const res = await authFetch(url, { method, body: payload });
   if (!res.ok) {
     const error = await res.json();
     showMessage(message, error.message || 'Unable to save candidate.');
@@ -326,6 +410,37 @@ function resetCandidateForm() {
   document.getElementById('candidateName').value = '';
   document.getElementById('candidatePosition').value = '';
   document.getElementById('candidateDescription').value = '';
+  document.getElementById('candidateImage').value = '';
+  updateCandidateImagePreview();
+}
+
+function updateCandidateImagePreview(candidate) {
+  const preview = document.getElementById('candidateImagePreview');
+  const input = document.getElementById('candidateImage');
+  if (!preview || !input) return;
+
+  const file = input.files?.[0];
+  if (file) {
+    const previewUrl = URL.createObjectURL(file);
+    preview.innerHTML = `
+      <img class="candidate-avatar" src="${previewUrl}" alt="Selected candidate photo preview" />
+      <span class="muted">${escapeHtml(file.name)}</span>
+    `;
+    return;
+  }
+
+  if (candidate?.imageUrl) {
+    preview.innerHTML = `
+      ${candidateAvatar(candidate)}
+      <span class="muted">Current photo. Choose a new file to replace it.</span>
+    `;
+    return;
+  }
+
+  preview.innerHTML = `
+    <div class="candidate-avatar placeholder" aria-hidden="true">EV</div>
+    <span class="muted">No photo selected.</span>
+  `;
 }
 
 async function handleCandidateAction(event) {
@@ -346,6 +461,8 @@ async function handleCandidateAction(event) {
     document.getElementById('candidateName').value = candidate.name;
     document.getElementById('candidatePosition').value = candidate.position;
     document.getElementById('candidateDescription').value = candidate.description || '';
+    document.getElementById('candidateImage').value = '';
+    updateCandidateImagePreview(candidate);
     showMessage(message, 'Editing candidate. Make changes and click Save.', 'success');
   }
 
@@ -383,6 +500,11 @@ function applyPageLogic() {
     return;
   }
 
+  const userBadge = document.getElementById('userBadge');
+  if (userBadge) {
+    userBadge.textContent = user.name || user.studentId || user.role;
+  }
+
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => redirectToLogin());
@@ -417,6 +539,7 @@ function applyPageLogic() {
 
     const form = document.getElementById('candidateForm');
     form.addEventListener('submit', createOrUpdateCandidate);
+    document.getElementById('candidateImage').addEventListener('change', () => updateCandidateImagePreview());
     document.getElementById('cancelEdit').addEventListener('click', () => {
       resetCandidateForm();
       showMessage(document.getElementById('candidateMessage'), 'Edit cancelled.', 'error');

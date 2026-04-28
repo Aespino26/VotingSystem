@@ -3,36 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - E‑Voting System</title>
+  <title>Register - E-Voting System</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body>
-  <main class="container">
-    <h1>E‑Voting System</h1>
-    
-    <!-- Registration Form -->
-    <form id="registerForm" class="card">
-      <h2>Create Account</h2>
-      <p>Register to cast your vote.</p>
+<body class="auth-page">
+  <main class="auth-layout">
+    <section class="auth-panel">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">EV</div>
+        <div>
+          <p class="eyebrow">Student registration</p>
+          <h1>E-Voting System</h1>
+        </div>
+      </div>
+      <div class="auth-copy">
+        <h2>Create your voting account</h2>
+        <p>Register with your student credentials so you can access ballots and election results from one secure dashboard.</p>
+      </div>
+      <div class="auth-highlights" aria-label="Registration highlights">
+        <span>Fast setup</span>
+        <span>Protected access</span>
+        <span>Student-only voting</span>
+      </div>
+    </section>
+
+    <form id="registerForm" class="card auth-card">
+      <div class="section-heading">
+        <p class="eyebrow">Get started</p>
+        <h2>Create account</h2>
+      </div>
       <label>
         Student ID
-        <input type="text" id="studentId" required minlength="3" maxlength="20" />
+        <input type="text" id="studentId" autocomplete="username" required minlength="3" maxlength="20" />
       </label>
       <label>
-        Full Name
-        <input type="text" id="name" required minlength="2" maxlength="100" />
+        Full name
+        <input type="text" id="name" autocomplete="name" required minlength="2" maxlength="100" />
       </label>
       <label>
         Password
-        <input type="password" id="password" required minlength="4" />
+        <input type="password" id="password" autocomplete="new-password" required minlength="4" />
       </label>
       <label>
-        Confirm Password
-        <input type="password" id="confirmPassword" required minlength="4" />
+        Confirm password
+        <input type="password" id="confirmPassword" autocomplete="new-password" required minlength="4" />
       </label>
-      <button type="submit">Register</button>
-      <div id="message" class="message"></div>
-      <p style="text-align: center; margin-top: 1rem;">
+      <button type="submit" class="primary full-width">Register</button>
+      <div id="message" class="message" role="status"></div>
+      <p class="form-note">
         Already have an account? <a href="/">Login here</a>
       </p>
     </form>

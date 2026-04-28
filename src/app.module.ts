@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { CandidatesModule } from './candidates/candidates.module';
 import { VotesModule } from './votes/votes.module';
 import { SeedModule } from './seed/seed.module';
+import { ImagesModule } from './images/images.module';
 import { SeedService } from './seed/seed.service';
 import { User } from './entities/user.entity';
 import { Candidate } from './entities/candidate.entity';
@@ -21,7 +22,7 @@ import { Vote } from './entities/vote.entity';
       database:
         process.env.NODE_ENV === 'test'
           ? ':memory:'
-          : process.env.DATABASE_PATH ?? 'data/voting.sqlite',
+          : (process.env.DATABASE_PATH ?? 'data/voting.sqlite'),
       synchronize: true,
       logging: false,
       entities: [User, Candidate, Vote],
@@ -31,6 +32,7 @@ import { Vote } from './entities/vote.entity';
     CandidatesModule,
     VotesModule,
     SeedModule,
+    ImagesModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

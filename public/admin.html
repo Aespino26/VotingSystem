@@ -3,43 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - E‑Voting</title>
+  <title>Admin Dashboard - E-Voting</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <header class="app-header">
-    <h1>Admin Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
+    <a class="brand compact" href="/admin.html" aria-label="E-Voting admin home">
+      <div class="brand-mark" aria-hidden="true">EV</div>
+      <div>
+        <p class="eyebrow">Admin console</p>
+        <h1>E-Voting</h1>
+      </div>
+    </a>
+    <div class="header-actions">
+      <span id="userBadge" class="user-badge">Admin</span>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </div>
   </header>
 
-  <main class="container">
-    <section class="card">
-      <h2>Manage Candidates</h2>
-      <form id="candidateForm" class="candidate-form">
-        <input type="hidden" id="candidateId" />
-        <label>
-          Name
-          <input type="text" id="candidateName" required />
-        </label>
-        <label>
-          Position
-          <input type="text" id="candidatePosition" required />
-        </label>
-        <label>
-          Description
-          <textarea id="candidateDescription"></textarea>
-        </label>
-        <button type="submit" class="primary">Save Candidate</button>
-        <button type="button" id="cancelEdit" class="secondary">Cancel</button>
-      </form>
-
-      <div id="candidateList"></div>
-      <div id="candidateMessage" class="message"></div>
+  <main class="dashboard">
+    <section class="page-title">
+      <p class="eyebrow">Election management</p>
+      <h2>Manage candidates and monitor results</h2>
     </section>
 
-    <section class="card">
-      <h2>Results</h2>
-      <div id="results"></div>
+    <section class="dashboard-grid admin-grid">
+      <div class="card">
+        <div class="section-heading">
+          <p class="eyebrow">Candidate record</p>
+          <h2>Manage candidates</h2>
+        </div>
+        <form id="candidateForm" class="candidate-form" enctype="multipart/form-data">
+          <input type="hidden" id="candidateId" />
+          <label>
+            Name
+            <input type="text" id="candidateName" required />
+          </label>
+          <label>
+            Position
+            <input type="text" id="candidatePosition" required />
+          </label>
+          <label class="form-span">
+            Description
+            <textarea id="candidateDescription"></textarea>
+          </label>
+          <label class="form-span">
+            Candidate photo
+            <input type="file" id="candidateImage" accept="image/*" />
+          </label>
+          <div id="candidateImagePreview" class="image-preview form-span">
+            <div class="candidate-avatar placeholder" aria-hidden="true">EV</div>
+            <span class="muted">No photo selected.</span>
+          </div>
+          <div class="form-actions form-span">
+            <button type="submit" class="primary">Save candidate</button>
+            <button type="button" id="cancelEdit" class="secondary">Cancel</button>
+          </div>
+        </form>
+        <div id="candidateMessage" class="message" role="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-heading">
+          <p class="eyebrow">Directory</p>
+          <h2>Candidate list</h2>
+        </div>
+        <div id="candidateList" class="stacked-list"></div>
+      </div>
+
+      <div class="card results-card">
+        <div class="section-heading">
+          <p class="eyebrow">Current count</p>
+          <h2>Results</h2>
+        </div>
+        <div id="results" class="stacked-list"></div>
+      </div>
     </section>
   </main>
   <script src="/js/app.js"></script>

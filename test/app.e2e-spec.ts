@@ -120,9 +120,7 @@ describe('E-Voting System API (e2e)', () => {
     });
 
     it('GET /auth/me should fail without token', () => {
-      return request(app.getHttpServer())
-        .get('/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/auth/me').expect(401);
     });
   });
 
@@ -141,9 +139,7 @@ describe('E-Voting System API (e2e)', () => {
     });
 
     it('GET /candidates without auth should fail', () => {
-      return request(app.getHttpServer())
-        .get('/candidates')
-        .expect(401);
+      return request(app.getHttpServer()).get('/candidates').expect(401);
     });
 
     it('POST /candidates should create a candidate (admin only)', () => {

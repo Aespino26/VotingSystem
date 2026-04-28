@@ -23,18 +23,24 @@ export class CandidatesService {
   }
 
   async create(input: Partial<Candidate>): Promise<Candidate> {
-    const candidate = this.candidatesRepository.create(input);
+    const candidate = this.candidatesRepository.create(this.cleanInput(input));
     return this.candidatesRepository.save(candidate);
   }
 
   async update(id: number, input: Partial<Candidate>): Promise<Candidate> {
     const candidate = await this.findOne(id);
-    Object.assign(candidate, input);
+    Object.assign(candidate, this.cleanInput(input));
     return this.candidatesRepository.save(candidate);
   }
 
   async remove(id: number): Promise<void> {
     const candidate = await this.findOne(id);
     await this.candidatesRepository.remove(candidate);
+  }
+
+  private cleanInput(input: Partial<Candidate>): Partial<Candidate> {
+    return Object.fromEntries(
+      Object.entries(input).filter(([, value]) => value !== undefined),
+    ) as Partial<Candidate>;
   }
 }

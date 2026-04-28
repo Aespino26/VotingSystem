@@ -3,28 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>E‑Voting System</title>
+  <title>E-Voting System</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body>
-  <main class="container">
-    <h1>E‑Voting System</h1>
-    
-    <!-- Login Form -->
-    <form id="loginForm" class="card">
-      <h2>Login</h2>
-      <p>Enter your student ID and password to login.</p>
+<body class="auth-page">
+  <main class="auth-layout">
+    <section class="auth-panel">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">EV</div>
+        <div>
+          <p class="eyebrow">Secure campus voting</p>
+          <h1>E-Voting System</h1>
+        </div>
+      </div>
+      <div class="auth-copy">
+        <h2>Sign in to your ballot</h2>
+        <p>Access your assigned ballot, review candidates, and submit your vote through a focused student portal.</p>
+      </div>
+      <div class="auth-highlights" aria-label="Voting system highlights">
+        <span>Role-based access</span>
+        <span>Live results</span>
+        <span>One vote per position</span>
+      </div>
+    </section>
+
+    <form id="loginForm" class="card auth-card">
+      <div class="section-heading">
+        <p class="eyebrow">Welcome back</p>
+        <h2>Login</h2>
+      </div>
       <label>
         Student ID
-        <input type="text" id="studentId" required />
+        <input type="text" id="studentId" autocomplete="username" required />
       </label>
       <label>
         Password
-        <input type="password" id="password" required />
+        <input type="password" id="password" autocomplete="current-password" required />
       </label>
-      <button type="submit">Login</button>
-      <div id="message" class="message"></div>
-      <p style="text-align: center; margin-top: 1rem;">
+      <button type="submit" class="primary full-width">Login</button>
+      <div id="message" class="message" role="status"></div>
+      <p class="form-note">
         Don't have an account? <a href="/register.html">Register here</a>
       </p>
     </form>

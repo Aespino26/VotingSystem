@@ -23,16 +23,26 @@ export class AuthService {
     return user;
   }
 
-  async register(studentId: string, name: string, password: string, role?: string) {
+  async register(
+    studentId: string,
+    name: string,
+    password: string,
+    role?: string,
+  ) {
     const existing = await this.usersService.findByStudentId(studentId);
     if (existing) {
       throw new UnauthorizedException('Student ID already registered');
     }
 
-    const user = role === 'admin' 
-      ? await this.usersService.createAdmin(studentId, name, password)
-      : await this.usersService.createStudent(studentId, name, password);
-    const payload = { sub: user.id, studentId: user.studentId, role: user.role };
+    const user =
+      role === 'admin'
+        ? await this.usersService.createAdmin(studentId, name, password)
+        : await this.usersService.createStudent(studentId, name, password);
+    const payload = {
+      sub: user.id,
+      studentId: user.studentId,
+      role: user.role,
+    };
     return {
       access_token: this.jwtService.sign(payload),
       user: {
@@ -50,7 +60,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid student ID or password');
     }
 
-    const payload = { sub: user.id, studentId: user.studentId, role: user.role };
+    const payload = {
+      sub: user.id,
+      studentId: user.studentId,
+      role: user.role,
+    };
     return {
       access_token: this.jwtService.sign(payload),
       user: {

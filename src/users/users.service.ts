@@ -19,15 +19,33 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  async createStudent(studentId: string, name: string, password: string): Promise<User> {
+  async createStudent(
+    studentId: string,
+    name: string,
+    password: string,
+  ): Promise<User> {
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({ studentId, name, passwordHash, role: 'student' });
+    const user = this.usersRepository.create({
+      studentId,
+      name,
+      passwordHash,
+      role: 'student',
+    });
     return this.usersRepository.save(user);
   }
 
-  async createAdmin(studentId: string, name: string, password: string): Promise<User> {
+  async createAdmin(
+    studentId: string,
+    name: string,
+    password: string,
+  ): Promise<User> {
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({ studentId, name, passwordHash, role: 'admin' as UserRole });
+    const user = this.usersRepository.create({
+      studentId,
+      name,
+      passwordHash,
+      role: 'admin' as UserRole,
+    });
     return this.usersRepository.save(user);
   }
 
